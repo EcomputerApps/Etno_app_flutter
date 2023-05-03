@@ -96,7 +96,8 @@ abstract class SectionBase with Store {
     Menu('assets/incident.png', 'Incidentes', '', Icons.dangerous),
     Menu('assets/reserve.png', 'Reservas', '', Icons.beenhere),
     Menu('assets/box_enser.png', 'Retirada de Enseres', '', Icons.recycling),
-    Menu('assets/quiz_decide.png', 'Yo decido', '', Icons.quiz)
+    Menu('assets/quiz_decide.png', 'Yo decido', '', Icons.quiz),
+    Menu('assets/quiz_decide.png', 'Yo decido', '', Icons.quiz),
   ];
 
   @action
@@ -105,15 +106,17 @@ abstract class SectionBase with Store {
       final response = await http.get(Uri.parse(
           '${Globals.url_microservice_etno}custom_links?username=$locality'));
 
-
       final decodeBody = utf8.decode(response.bodyBytes);
       final data = (jsonDecode(decodeBody) as List).map((e) =>
           CustomLink.fromJson(e)).toList();
+
       for (var element in data) {
+        print(element.name);
         sectionList.add(Menu(
-            'assets/custom_link.png', element.name, element.webUrl,
+            'assets/quiz_decide.png', element.name, element.webUrl,
             Icons.add_link));
       }
+
       return data;
     } catch (e) {
       debugPrint(e.toString());

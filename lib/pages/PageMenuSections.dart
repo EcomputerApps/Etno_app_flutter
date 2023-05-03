@@ -1,4 +1,5 @@
 import 'package:etno_app/main.dart';
+import 'package:etno_app/models/menu/Menu.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:etno_app/pages/PageAd.dart';
@@ -23,6 +24,7 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../bloc/color/color_bloc.dart';
 import '../models/section_details/SectionDetails.dart';
+import '../widgets/home_widgets.dart';
 import 'equipment/PageEnseresForm.dart';
 
 class PageMenuSections extends StatefulWidget {
@@ -36,7 +38,6 @@ class PageMenuSections extends StatefulWidget {
 
 class PageState extends State<PageMenuSections> {
   SectionDetails sectionDetails = SectionDetails.empty();
-  final sectionStore = Section();
   final Section section = Section();
   int bottomIndex = 3;
 
@@ -46,12 +47,13 @@ class PageState extends State<PageMenuSections> {
           .getSectionDetails('Bolea')
           .then((value) => setState(() => sectionDetails = value)
       );
+      section.getCustomLinks('Bolea');
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: appBarCustom(context, false, 'Menú', Icons.language, false, () => print('Internalization in Menu'), null),
         body: SafeArea(
@@ -62,7 +64,7 @@ class PageState extends State<PageMenuSections> {
                 children: [
                   Expanded(child: Observer(builder: (context) => GridView.count(
                       crossAxisCount: 2,
-                      children: sectionStore.getSections.map((e) =>
+                      children: section.getSections.map((e) =>
                           Center(
                               child: SizedBox(
                                 height: 170,
@@ -85,6 +87,7 @@ class PageState extends State<PageMenuSections> {
                                       case 'Reservas': Navigator.push(context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => const PageListReserves(), transitionDuration: Duration.zero, reverseTransitionDuration: Duration.zero)); break;
                                       case 'Retirada de Enseres': Navigator.push(context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => const PageEnseres(), reverseTransitionDuration: Duration.zero, transitionDuration: Duration.zero)); break;
                                       case 'Yo decido': Navigator.push(context, PageRouteBuilder(pageBuilder: (context, animation1, animation2) => const PageQuiz(), reverseTransitionDuration: Duration.zero, transitionDuration: Duration.zero)); break;
+                                      default: launchInBrowser(Uri.parse(e.webUrl!));
                                     }
                                   },
                                   child: Card(
@@ -97,7 +100,7 @@ class PageState extends State<PageMenuSections> {
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
                                               Icon(e.iconData, size: 60.0, color: context.watch<ColorBloc>().state.colorDark),
-                                              Text(getSectionText(e.title!, context), style: const TextStyle( fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center),
+                                              Text(getSectionText(e.title!, context), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0, color: Colors.black), textAlign: TextAlign.center),
                                               renderTextSection(e.title!, sectionDetails, context)
                                             ]
                                         )
@@ -204,6 +207,9 @@ Widget renderTextSection(String sectionName, SectionDetails sectionDetails, Buil
 
     case 'Yo decido':
       return Text(AppLocalizations.of(context)!.section_quiz, style: const TextStyle(color: Color.fromRGBO(130, 130, 130, 1), fontSize: 14.0));
+
+    case 'bbbb':
+      return const Text('Link Personalizado', style: const TextStyle(color: Color.fromRGBO(130, 130, 130, 1), fontSize: 14.0));
     default:
       return const Text('Link Personalizado', style: const TextStyle(color: Color.fromRGBO(130, 130, 130, 1), fontSize: 14.0));
   }
